@@ -1,0 +1,129 @@
+################################################################################
+# This is the official grammar for the JWL Programming Language.
+# 
+# Comments in the grammar are indicated by an octothorpe (#).
+# 
+# Simple tokens (keywords, basic types, etc.) are indicated by
+# SCREAMING_SNAKE_CASE.
+# 
+# Complex tokens are indicated by kebab-case.
+# 
+# Sometimes you may see "# Empty" in some rules; this is intentional and simply
+# means that the rule has the possibility of being satisfied by nothing. In
+# other words, something is optional.
+# 
+# The end of file is designated by the $ character.
+################################################################################
+
+program : include-list
+        | include-list program
+        | declarations
+        | declarations program
+        | definitions
+        | definitions program
+        | $
+        ;
+
+### Types
+# Types are pretty important to strongly-typed languages, so they come early.
+
+type : user-defined-type
+     | built-in-type
+     ;
+
+# Yep, a user-defined type is just an identifier.
+user-defined-type : IDENTIFIER
+                  ;
+
+# No character, only string! After all, a character is just a string with length 1.
+built-in-type : INTEGER
+              | REAL
+              | BOOLEAN
+              | STRING
+              ;
+
+### Includes
+# Includes in JWL look like this:
+#   `include 'path/to/file'`
+# OR
+#   `include "path/to/file"`
+
+include-list : include
+             | include include-list
+             ;
+
+include : INCLUDE STRING
+        ;
+
+### Definitions
+# A definition is an explicit instantiation of an object or variable.
+# 
+# For example,
+#   `var a`
+# is a declaration, not a definition, but...
+#   `var a = 10`
+# is a definition since it assigns a value to the variable `a`.
+# 
+# Classes and functions are a bit trickier since they are defined by their itnernals, but they
+# both can still be declared but not defined.
+
+definitions : definition
+            | definition definitions
+            ;
+
+definition : class-definition
+           | function-definition
+           | variable-definition
+           | type-definition
+           ;
+
+## Classes!
+# Class definitions should look something like this:
+#   ```
+#   class this-is-a-class : perhaps-another {
+#       // ...
+#   }
+#   ```
+
+class-definition : CLASS IDENTIFIER optional-inheritance-list block
+                 ;
+
+optional-inheritance-list : inheritance-list
+                          | # Empty
+                          ;
+
+inheritance-list : COLON identifier-list
+                 ;
+
+identifier-list : IDENTIFIER
+                | IDENTIFIER COMMA identifier-list
+                ;
+## Functions!
+# Function definitions should look something like this:
+#   ```
+#   int sum-two-nums(int a, int b) {
+#       return a + b
+#   }
+#   ```
+
+# In this case, 'type' indicates return type.
+function-definition : type IDENTIFIER LEFT_PAREN optional-parameter-list RIGHT_PAREN block
+                    ;
+
+optional-parameter-list : parameter-list
+                        | # Empty
+                        ;
+
+parameter-list : type IDENTIFIER
+               | type IDENTIFIER parameter-list
+               ;
+
+## Variables!
+# Variable definitions should look something like this:
+#   ```
+#   int c = a + b
+#   ```
+
+variable-definition : type IDENTIFIER EQUALS expression
+                    ;
+
