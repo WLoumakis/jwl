@@ -10,7 +10,7 @@ The correct pronunciation of **JWL** is "jewel."  You might be wondering what **
 
 The reason for that is because I'm lazy. Kebab-case is the way of the future, whether you like it or not. Take the following as an example:
 ```
-var kebab-case-rules = snake_case_sucks_because_of_pressing_shift - camelCaseIsEvenWorseSinceYouStillPressShift + whatHappensWithABCAcronyms
+var kebab-case-rules = snake_case_sucks_because_of_pressing_shift + camelCaseIsEvenWorseSinceYouStillPressShift + whatHappensWithABCInitialisms
 ```
 See? Kebab-case allows you to not have to press the shift key **EVER** and you are never confused where a word stops — unless it's a hyphenated word but other case types would struggle with that too. Regardless, kebab-case is amazing. If you're wondering how one would determine the difference between subtraction and variable name, it's really quite simple: **PAD YOUR OPERATORS WITH SPACES, YOU FUCKING MONSTER!!!**
 ```
