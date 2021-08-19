@@ -1,26 +1,22 @@
 ################################################################################
 # This is the official grammar for the JWL Programming Language.
+# It is similar to Extended Backus-Naur Form (EBNF), but there are some slight
+# differences that are -- in my opinion -- improvements.
 # 
 # Comments in the grammar are indicated by an octothorpe (#).
 # 
-# Simple tokens (keywords, basic types, etc.) are indicated by
+# Terminal symbols (keywords, basic types, symbols, etc.) are indicated by
 # SCREAMING_SNAKE_CASE.
 # 
-# Complex tokens are indicated by kebab-case.
-# 
-# Sometimes you may see "# Empty" in some rules; this is intentional and simply
-# means that the rule has the possibility of being satisfied by nothing. In
-# other words, something is optional.
+# Non-terminals symbols are indicated by kebab-case.
 # 
 # The end of file is designated by the $ character.
 ################################################################################
 
-program : include-list
-        | include-list program
-        | declarations
-        | declarations program
-        | definitions
-        | definitions program
+# So, zero-or-more includes, declarations, and/or definitions, followed by the end of file
+program : include* program
+        | declaration* program
+        | definition* program
         | $
         ;
 
@@ -31,9 +27,17 @@ type : user-defined-type
      | built-in-type
      ;
 
-# Yep, a user-defined type is just an identifier.
-user-defined-type : IDENTIFIER
+# Yep, a user-defined type is just an identifier or templated type.
+user-defined-type : identifier
+                  | templated-type
                   ;
+
+templated-type : identifier LEFT_ANGLE_BRACKET type [COMMA type]* RIGHT_ANGLE_BRACKET
+               ;
+
+# Identifiers must start with a letter or underscore(s), then are followed by any of the listed characters
+identifier : _*[a-zA-Z][_a-zA-Z0-9/\?;:'\"\{\}`~!@#$%\^&\*\-=\+\\\|]*
+           ;
 
 # No character, only string! After all, a character is just a string with length 1.
 built-in-type : INTEGER
@@ -42,17 +46,36 @@ built-in-type : INTEGER
               | STRING
               ;
 
+# While we're on the topic of built-in types...
+integer-literal : "0"
+                | "-"?[1-9][0-9]*
+                ;
+
+# Yes, you must include a number -- even if it's just 0 -- before the decimal, and if you include a decimal you better have a number after it, you filthy heathen.
+real-literal : "-"?[0-9]+ DOT [0-9]+
+             ;
+
+boolean-literal : TRUE
+                | FALSE
+                ;
+
+hex-literal : "0x"[0-9A-Fa-f]+
+            ;
+
+string-literal : quote-character .* quote-character
+               ;
+
+quote-character : QUOTATION_MARK
+                | APOSTROPHE
+                ;
+
 ### Includes
 # Includes in JWL look like this:
 #   `include 'path/to/file'`
 # OR
 #   `include "path/to/file"`
 
-include-list : include
-             | include include-list
-             ;
-
-include : INCLUDE STRING
+include : INCLUDE string-literal
         ;
 
 ### Definitions
@@ -66,10 +89,6 @@ include : INCLUDE STRING
 # 
 # Classes and functions are a bit trickier since they are defined by their itnernals, but they
 # both can still be declared but not defined.
-
-definitions : definition
-            | definition definitions
-            ;
 
 definition : class-definition
            | function-definition
@@ -85,18 +104,13 @@ definition : class-definition
 #   }
 #   ```
 
-class-definition : CLASS IDENTIFIER optional-inheritance-list block
+class-definition : CLASS identifier inheritance-list? block
                  ;
-
-optional-inheritance-list : inheritance-list
-                          | # Empty
-                          ;
 
 inheritance-list : COLON identifier-list
                  ;
 
-identifier-list : IDENTIFIER
-                | IDENTIFIER COMMA identifier-list
+identifier-list : identifier (COMMA identifier-list)*
                 ;
 ## Functions!
 # Function definitions should look something like this:
@@ -107,15 +121,10 @@ identifier-list : IDENTIFIER
 #   ```
 
 # In this case, 'type' indicates return type.
-function-definition : type IDENTIFIER LEFT_PAREN optional-parameter-list RIGHT_PAREN block
+function-definition : type identifier LEFT_PARENTHESIS parameter-list? RIGHT_PARENTHESIS block
                     ;
 
-optional-parameter-list : parameter-list
-                        | # Empty
-                        ;
-
-parameter-list : type IDENTIFIER
-               | type IDENTIFIER parameter-list
+parameter-list : type identifier (COMMA parameter-list)*
                ;
 
 ## Variables!
@@ -124,6 +133,6 @@ parameter-list : type IDENTIFIER
 #   int c = a + b
 #   ```
 
-variable-definition : type IDENTIFIER EQUALS expression
+variable-definition : type identifier EQUALS expression
                     ;
 
