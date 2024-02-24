@@ -36,7 +36,7 @@ templated-type : identifier LEFT_ANGLE_BRACKET type [COMMA type]* RIGHT_ANGLE_BR
                ;
 
 # Identifiers must start with a letter or underscore(s), then are followed by any of the listed characters
-identifier : _*[a-zA-Z][_a-zA-Z0-9/\?;:'\"\{\}`~!@#$%\^&\*\-=\+\\\|]*
+identifier : [_a-zA-Z][_a-zA-Z0-9/\?;:'\"\{\}`~!@#$%\^&\*\-=\+\\\|]*
            ;
 
 # No character, only string! After all, a character is just a string with length 1.
