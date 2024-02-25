@@ -57,11 +57,14 @@ user-defined-type : identifier
                   | templated-type
                   ;
 
-templated-type : identifier LEFT_ANGLE_BRACKET type [COMMA type]* RIGHT_ANGLE_BRACKET
+templated-type : identifier LEFT_ANGLE_BRACKET type-list RIGHT_ANGLE_BRACKET
                ;
 
-# Identifiers must start with a letter or underscore(s), then are followed by any of the listed characters
-identifier : [_a-zA-Z][_a-zA-Z0-9/\?;:'\"\{\}`~!@#$%\^&\*\-=\+\\\|]*
+type-list : type (COMMA type)*
+          ;
+
+# Identifiers must start with a letter or underscore, then are followed by any of the listed characters
+identifier : [_a-zA-Z][_a-zA-Z0-9/\?'\"~!@#$%\^&\*\-=\+\\\|]*
            ;
 
 # No character, only string! After all, a character is just a string with length 1.
@@ -72,33 +75,40 @@ built-in-type : INTEGER
               ;
 
 # While we're on the topic of built-in types...
-integer-literal : "0"
-                | "-"?[1-9][0-9]*
+number : hex-literal
+       | decimal-literal
+       | octal-literal
+       | binary-literal
+       ;
+
+hex-literal : 0x[0-9A-Fa-f]+
+            ;
+
+decimal-literal : [0-9]+(\.[0-9]+)?
                 ;
 
-# Yes, you must include a number -- even if it's just 0 -- before the decimal, and if you include a decimal you better have a number after it, you filthy heathen.
-real-literal : "-"?[0-9]+ DOT [0-9]+
-             ;
+octal-literal : 0o[0-7]+
+              ;
+
+binary-literal : 0b[0-1]+
+               ;
 
 boolean-literal : TRUE
                 | FALSE
                 ;
 
-hex-literal : "0x"[0-9A-Fa-f]+
-            ;
-
-string-literal : quote-character .* quote-character
+string-literal : QUOTATION_MARK .* QUOTATION_MARK
+               | APOSTROPHE .* APOSTROPHE
+               | BACKTICK .* BACKTICK
                ;
-
-quote-character : QUOTATION_MARK
-                | APOSTROPHE
-                ;
 
 ### Includes
 # Includes in JWL look like this:
-#   `include 'path/to/file'`
+#   include 'path/to/file'
 # OR
-#   `include "path/to/file"`
+#   include "path/to/file"
+# OR
+#   include `path/to/file`
 
 include : INCLUDE string-literal
         ;
@@ -129,13 +139,20 @@ definition : class-definition
 #   }
 #   ```
 
-class-definition : CLASS identifier inheritance-list? block
+class-definition : CLASS identifier inheritance-list? LEFT_BRACE class-block RIGHT_BRACE
                  ;
+
+class-block : visibility-section
+            | statement*
+            ;
+
+visibility-section : visibility-modifier COLON statement*
+                   ;
 
 inheritance-list : COLON identifier-list
                  ;
 
-identifier-list : identifier (COMMA identifier-list)*
+identifier-list : identifier (COMMA identifier)*
                 ;
 ## Functions!
 # Function definitions should look something like this:
@@ -149,7 +166,7 @@ identifier-list : identifier (COMMA identifier-list)*
 function-definition : type identifier LEFT_PARENTHESIS parameter-list? RIGHT_PARENTHESIS block
                     ;
 
-parameter-list : type identifier (COMMA parameter-list)*
+parameter-list : type identifier (COMMA parameter-list)?
                ;
 
 ## Variables!
