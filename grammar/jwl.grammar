@@ -48,6 +48,7 @@ comment : FORWARD_SLASH FORWARD_SLASH .* \r?\n
 ### Types
 # Types are pretty important to strongly-typed languages, so they come early.
 
+# There are only two kinds of types in JWL, built-in and user-defined
 type : user-defined-type
      | built-in-type
      ;
@@ -81,22 +82,28 @@ number : hex-literal
        | binary-literal
        ;
 
+# Hex numbers must start with 0x, then must be followed by at least one hex digit
 hex-literal : 0x[0-9A-Fa-f]+
             ;
 
+# Decimal numbers can be any sequence of digits, optionally followed by a decimal with another sequence of digits
 decimal-literal : [0-9]+(\.[0-9]+)?
                 ;
 
+# Octal numbers must start with 0o, then must be followed by at least one octal digit
 octal-literal : 0o[0-7]+
               ;
 
+# Binary numbers must start with 0b, then must be followed by at least one binary digit
 binary-literal : 0b[0-1]+
                ;
 
+# Booleans are only true or false
 boolean-literal : TRUE
                 | FALSE
                 ;
 
+# Strings are any sequence of characters wrapped in quotation marks, apostrophes, or backticks
 string-literal : QUOTATION_MARK .* QUOTATION_MARK
                | APOSTROPHE .* APOSTROPHE
                | BACKTICK .* BACKTICK
