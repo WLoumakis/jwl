@@ -3,8 +3,6 @@
 # It is similar to Extended Backus-Naur Form (EBNF), but there are some slight
 # differences that are -- in my opinion -- improvements.
 # 
-# Comments in the grammar are indicated by an octothorpe (#).
-# 
 # Terminal symbols (keywords, basic types, symbols, etc.) are indicated by
 # SCREAMING_SNAKE_CASE.
 # 
@@ -13,11 +11,38 @@
 # The end of file is designated by the $ character.
 ################################################################################
 
-# So, zero-or-more includes, declarations, and/or definitions, followed by the end of file
+### JWL Program
+# A JWL program can be characterized by zero-or-more:
+#   - includes
+#   - declarations
+#   - definitions
+#   - comments
+# which eventually are terminated by the end of file character.
+
 program : include* program
         | declaration* program
         | definition* program
+        | comment* program
         | $
+        ;
+
+### Comments
+# Comments in JWL, much like in other languages, are skipped over during lexing and therefore excluded from compilation.
+#
+# A single-line comment in JWL looks like:
+#   // some text
+# A multi-line comment in JWL looks like:
+#   /[
+#       some text
+#       that can
+#       span multiple
+#       lines
+#   /]
+# Yes, I did include carriage returns for all you filthy Windows developers.
+# That doesn't change my thinking that you should just grow up and code on Linux.
+
+comment : FORWARD_SLASH FORWARD_SLASH .* \r?\n
+        | FORWARD_SLASH LEFT_ANGLE_BRACKET (.\r\n)* FORWARD_SLASH RIGHT_ANGLE_BRACKET
         ;
 
 ### Types
