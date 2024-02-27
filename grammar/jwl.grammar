@@ -65,14 +65,28 @@ type-list : type (COMMA type)*
           ;
 
 # Identifiers must start with a letter or underscore, then are followed by any of the listed characters
-identifier : [_a-zA-Z][_a-zA-Z0-9/\?'\"~!@#$%\^&\*\-=\+\\\|]*
+identifier : [_a-zA-Z][_a-zA-Z0-9/\?~!@#$%\^&\*\-=\+\\\|]*
            ;
 
 # No character, only string! After all, a character is just a string with length 1.
-built-in-type : INTEGER
-              | REAL
-              | BOOLEAN
+built-in-type : BOOL
+              | UNSIGNED? INT
+              | I8
+              | I16
+              | I32
+              | I64
+              | UI8
+              | UI16
+              | UI32
+              | UI64
+              | UNSIGNED? FLOAT
+              | F32
+              | UF32
+              | UNSIGNED? DOUBLE
+              | F64
+              | UF64
               | STRING
+              | VOID
               ;
 
 # While we're on the topic of built-in types...
@@ -86,7 +100,8 @@ number : hex-literal
 hex-literal : 0x[0-9A-Fa-f]+
             ;
 
-# Decimal numbers can be any sequence of digits, optionally followed by a decimal with another sequence of digits
+# Decimal numbers can be any sequence of digits, optionally followed by a decimal with another sequence of digits.
+# Numbers with a decimal must first start with a number, even if just 0.
 decimal-literal : [0-9]+(\.[0-9]+)?
                 ;
 

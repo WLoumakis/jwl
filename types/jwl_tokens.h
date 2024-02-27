@@ -1,20 +1,65 @@
 #ifndef __JWL_TOKENS_H__
 #define __JWL_TOKENS_H__
 
-namespace jwl {
-    enum Token {
+namespace jwl
+{
+    enum Token
+    {
         // An invalid token
         INVALID = -1,
+
+        // Keywords
+        KeywordMin,
+
+        IF = KeywordMin,    // "if"
+        FOR,                // "for"
+        DO,                 // "do"
+        WHILE,              // "while"
+        SWITCH,             // "switch"
+
+        TEMPLATE,           // "template"
+        TYPENAME,           // "typename"
+
+        BOOL,               // "bool"
+        TRUE,               // "true"
+        FALSE,              // "false"
+
+        UNSIGNED,           // "unsigned"
+
+        INT,                // "int"
+        I8,                 // "i8"
+        I16,                // "i16"
+        I32,                // "i32"
+        I64,                // "i64"
+        UI8,                // "ui8"
+        UI16,               // "ui16"
+        UI32,               // "ui32"
+        UI64,               // "ui64"
+
+        FLOAT,              // "float"
+        F32,                // "f32"
+        UF32,               // "uf32"
+
+        DOUBLE,             // "double"
+        F64,                // "f64"
+        UF64,               // "uf64"
+
+        STRING,             // "string"
+        VOID,               // "void"
+
+        CLASS,              // "class"
+        PRIVATE,            // "private"
+        PROTECTED,          // "protected"
+        PUBLIC,             // "public"
+
+        INCLUDE,            // "include"
+
+        KeywordMax = INCLUDE,
+        KeywordCount,
 
         // Complex strings
         IDENTIFIER,         // [_a-zA-Z][_a-zA-Z0-9/\?'\"~!@#$%\^&\*\-=\+\\\|]*
         NUMBER,             // hexadecimal, decimal, octal, or binary
-
-        // Whitespace
-        SPACE,              // ' '
-        TAB,                // '\t'
-        NEWLINE,            // '\n'
-        CARRIAGE_RETURN,    // '\r'
 
         // Symbols
         COMMA,              // ','
@@ -56,7 +101,6 @@ namespace jwl {
         RIGHT_PARENTHESIS,  // ')'
 
         HYPHEN,             // '-'
-        UNDERSCORE,         // '_'
 
         EQUALS,             // '='
         PLUS,               // '+'
