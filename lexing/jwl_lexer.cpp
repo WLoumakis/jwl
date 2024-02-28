@@ -253,15 +253,69 @@ Token Lexer::lexNumber()
 
 Token Lexer::lexHexadecimal()
 {
-    return Token::INVALID;
+    char temp[MAX_TOKEN_LENGTH + 1] = {0};
+    std::size_t i = 0;
+
+    // We have only confirmed that the sequence of hex digits started with 0x, so we need to verify the remaining digits
+    char look = lookAhead();
+    while (isxdigit(look))
+    {
+        temp[i++] = getChar();
+        look = lookAhead();
+    }
+
+    // If we didn't find a hex digit, then it's an invalid token
+    if (i == 0)
+    {
+        return Token::INVALID;
+    }
+
+    // Since look is no longer a valid hex digit
+    return Token::NUMBER;
 }
 
 Token Lexer::lexOctal()
 {
-    return Token::INVALID;
+    char temp[MAX_TOKEN_LENGTH + 1] = {0};
+    std::size_t i = 0;
+
+    // We have only confirmed that the sequence of octal digits started with 0o, so we need to verify the remaining digits
+    char look = lookAhead();
+    while (look >= '0' && look <= '7')
+    {
+        temp[i++] = getChar();
+        look = lookAhead();
+    }
+
+    // If we didn't find a octal digit, then it's an invalid token
+    if (i == 0)
+    {
+        return Token::INVALID;
+    }
+
+    // Since look is no longer a valid octal digit
+    return Token::NUMBER;
 }
 
 Token Lexer::lexBinary()
 {
-    return Token::INVALID;
+    char temp[MAX_TOKEN_LENGTH + 1] = {0};
+    std::size_t i = 0;
+
+    // We have only confirmed that the sequence of binary digits started with 0x, so we need to verify the remaining digits
+    char look = lookAhead();
+    while (look == '0' || look == '1')
+    {
+        temp[i++] = getChar();
+        look = lookAhead();
+    }
+
+    // If we didn't find a binary digit, then it's an invalid token
+    if (i == 0)
+    {
+        return Token::INVALID;
+    }
+
+    // Since look is no longer a valid binary digit
+    return Token::NUMBER;
 }
